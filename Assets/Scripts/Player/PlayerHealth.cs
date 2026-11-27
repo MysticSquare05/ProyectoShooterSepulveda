@@ -1,16 +1,13 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour
 {
-    public int health = 20;
-
-    public float iFrames = 2f;
-    public float iFramesCounter;
-    public bool isInvincible;
-    public bool isHit;
-
+    public int lives = 3;
+    public Transform respawnPoint;
     PlayerMovement player;
     Rigidbody2D rb;
+    public ScoreHUD scoreHUD;
 
     public void Awake()
     {
@@ -19,76 +16,44 @@ public class PlayerHealth : MonoBehaviour
     }
     public void Start()
     {
-        isHit = false;
-        isInvincible = false;
+        
+        
     }
 
     private void Update()
     {
-        if (isInvincible && iFramesCounter > 0)
+
+        if (transform.position.y < -5)
         {
-            iFramesCounter -= Time.deltaTime;
-        }
-        else
-        {
-            isInvincible = false;
+            Die();
         }
     }
 
-    private void FixedUpdate()
-    {
-        if (isHit)
-        {
-            Hit();
-        }
-    }
-
-    public void LoseHealth(int damage)
-    {
-        health -= damage;
-    }
- 
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            if (!isInvincible)
-            {
-
-                int damage = collision.gameObject.GetComponent<EnemyBase>().damage;
-                LoseHealth(damage);
-                if (health <= 0)
-                {
-                    Die();
-                }
-                else
-                {
-                    isHit = true;
-                }
-
-            }
+            Die();
         }
     }
     void Die()
     {
-        Destroy(gameObject);
+        lives--;
 
-    }
-
-    void Hit()
-    {
-        isHit = false;
-
-        if (!isInvincible)
+        if (lives <= 0)
         {
-            isInvincible = true;
-            iFramesCounter = iFrames;
-            Vector2 knockbackForce = new Vector2(1300 * (player.facingDirection * -1), rb.linearVelocity.y + 300);
-            rb.AddForce(knockbackForce);
-
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
+        else
+        {
+            transform.position = respawnPoint.position;
+            rb.linearVelocity = Vector2.zero;
+        }
+        scoreHUD.RefreshLives();
     }
+
+    
 
     
 }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -25,6 +26,10 @@ public class PlayerMovement : MonoBehaviour
 
     public AudioClip jumpSFX;
     public AudioClip shootSFX;
+    public AudioClip coinSFX;
+
+    public ScoreHUD scoreHUD;
+    public int score = 0;
 
 
     public bool isJumping = false;
@@ -95,6 +100,15 @@ public class PlayerMovement : MonoBehaviour
 
             Jump();
         }
+    }
+
+    public int AddScore(int addedScore)
+    {
+        audio.generator = coinSFX;
+        audio.Play();
+        score += addedScore;
+        scoreHUD.RefreshScore();
+        return score;
     }
 
     void Jump()

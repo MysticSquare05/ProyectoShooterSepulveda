@@ -9,10 +9,13 @@ public class Bullet : MonoBehaviour
 
     public int damage = 4;
     GameObject playerObj;
-    int playerDir;
+
+    PlayerMovement player;
+    
     void Awake()
     {
         rb.GetComponent<Rigidbody2D>();
+        player = FindAnyObjectByType<PlayerMovement>();
     }
 
     public void ShootBullet(int direction)
@@ -26,6 +29,7 @@ public class Bullet : MonoBehaviour
         if (enemy != null)
         {
             enemy.TakeDamage();
+            player.AddScore(100);
             Destroy(gameObject);
         }
         
